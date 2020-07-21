@@ -260,9 +260,9 @@ data class Bullet(val physics: Physics) : CanDraw {
     private var ticksSinceFired: Int = 0
 
     override fun draw(renderer: ShapeRenderer) {
-        renderer.use(ShapeRenderer.ShapeType.Point) {
+        renderer.use(ShapeRenderer.ShapeType.Line) {
             renderer.color = Color.WHITE
-            renderer.point(physics.location.x, physics.location.y, 0f)
+            renderer.circle(physics.location.x, physics.location.y, 2f)
         }
     }
 
