@@ -28,7 +28,7 @@ fun main() {
 class KtxAstroidGame : KtxApplicationAdapter {
 
     private lateinit var renderer: ShapeRenderer
-    private var spaceShip = SpaceShip(Physics(640f, 350f))
+    private var spaceShip = SpaceShip(Physics(Point(640f, 350f)))
     private val astroids = mutableListOf<Astroid>()
     private val bullets = mutableListOf<Bullet>()
 
@@ -40,11 +40,13 @@ class KtxAstroidGame : KtxApplicationAdapter {
         (1..5).forEach {
             astroids.add(
                     Astroid(40f, Physics(
-                            (50..1200).random().toFloat(),
-                            (0..700).random().toFloat(),
+                            Point(
+                                    (50..1200).random().toFloat(),
+                                    (0..700).random().toFloat()
+                            ),
                             Speed(
-                                levelSpeedRange.random().toFloat(),
-                                levelSpeedRange.random().toFloat()
+                                    levelSpeedRange.random().toFloat(),
+                                    levelSpeedRange.random().toFloat()
                             )
                     ))
             )
@@ -89,9 +91,9 @@ class KtxAstroidGame : KtxApplicationAdapter {
 
 
         // rewrite - not very functional..
-        var hits = mutableListOf<Pair<Astroid,Bullet>>()
-        for(b in bullets) {
-            for(a in astroids) {
+        var hits = mutableListOf<Pair<Astroid, Bullet>>()
+        for (b in bullets) {
+            for (a in astroids) {
                 if (a.isHitByBullet(b)) {
                     hits.add(Pair(a, b))
                 }
@@ -105,10 +107,10 @@ class KtxAstroidGame : KtxApplicationAdapter {
             bullets.remove(bullet)
             astroids.remove(astroid)
             // explode!!!
-            if(astroid.size > 10) {
+            if (astroid.size > 10) {
                 // spawn two smaller astroids
                 astroids.add(Astroid(astroid.size / 2, Physics(
-                        astroid.physics.x, astroid.physics.y,
+                       astroid.physics.location,
                         Speed(
                                 (-6..6).random().toFloat(),
                                 (-6..6).random().toFloat()
@@ -116,7 +118,7 @@ class KtxAstroidGame : KtxApplicationAdapter {
                 ))
 
                 astroids.add(Astroid(astroid.size / 2, Physics(
-                        astroid.physics.x, astroid.physics.y,
+                        astroid.physics.location,
                         Speed(
                                 (-6..6).random().toFloat(),
                                 (-6..6).random().toFloat()
@@ -142,7 +144,7 @@ class KtxAstroidGame : KtxApplicationAdapter {
 
         spaceShip.logic()
 
-        if(astroids.isEmpty()) {
+        if (astroids.isEmpty()) {
             println("New Level!")
         }
 
@@ -168,7 +170,7 @@ class Astroid(val size: Float, val physics: Physics) : CanDraw {
     override fun draw(renderer: ShapeRenderer) =
             renderer.use(ShapeRenderer.ShapeType.Line) {
                 renderer.color = Color.WHITE
-                renderer.circle(physics.x, physics.y, size)
+                renderer.circle(physics.location.x, physics.location.y, size)
             }
 
     fun logic() {
@@ -176,10 +178,10 @@ class Astroid(val size: Float, val physics: Physics) : CanDraw {
     }
 
     fun isHitByBullet(bullet: Bullet): Boolean =
-            bullet.physics.x > physics.x - size &&
-                    bullet.physics.x < physics.x + size &&
-                    bullet.physics.y > physics.y - size &&
-                    bullet.physics.y < physics.y + size
+            bullet.physics.location.x > physics.location.x - size &&
+                    bullet.physics.location.x < physics.location.x + size &&
+                    bullet.physics.location.y > physics.location.y - size &&
+                    bullet.physics.location.y < physics.location.y + size
 
 }
 
@@ -194,7 +196,7 @@ data class SpaceShip(val physics: Physics) : CanDraw {
     override fun draw(renderer: ShapeRenderer) {
         renderer.use(ShapeRenderer.ShapeType.Point) {
             renderer.color = Color.WHITE
-            renderer.point(physics.x, physics.y, 0f)
+            renderer.point(physics.location.x, physics.location.y, 0f)
         }
 
         renderer.use(ShapeRenderer.ShapeType.Line) {
@@ -210,10 +212,10 @@ data class SpaceShip(val physics: Physics) : CanDraw {
 
         // on our way to transform x and y to Point objects
         // keep it for now, but will be rewritten
-        val rotateAround = Point(physics.x, physics.y)
-        val one = Point(physics.x - 10, physics.y - 15)
-        val two = Point(physics.x, physics.y + 15)
-        val three = Point(physics.x + 10, physics.y - 15)
+        val rotateAround = physics.location
+        val one = Point(physics.location.x - 10, physics.location.y - 15)
+        val two = Point(physics.location.x, physics.location.y + 15)
+        val three = Point(physics.location.x + 10, physics.location.y - 15)
 
         val oneMark = one.rotate(rotateAround, direction)
         val twoMark = two.rotate(rotateAround, direction)
@@ -248,8 +250,7 @@ data class SpaceShip(val physics: Physics) : CanDraw {
 
     fun shoot(): Bullet =
             Bullet(Physics(
-                    physics.x,
-                    physics.y,
+                    physics.location,
                     Speed(5f, 5f)))
 
 }
@@ -261,7 +262,7 @@ data class Bullet(val physics: Physics) : CanDraw {
     override fun draw(renderer: ShapeRenderer) {
         renderer.use(ShapeRenderer.ShapeType.Point) {
             renderer.color = Color.WHITE
-            renderer.point(physics.x, physics.y, 0f)
+            renderer.point(physics.location.x, physics.location.y, 0f)
         }
     }
 
