@@ -84,7 +84,7 @@ class KtxAstroidGame : KtxApplicationAdapter {
     }
 
     private fun printDebug() {
-        println("spaceship: direction=${spaceShip.direction} ${spaceShip.physics}")
+        println("spaceship: direction=${spaceShip.angle} ${spaceShip.physics}")
     }
 
     private fun logic() {
@@ -191,7 +191,7 @@ class Astroid(val size: Float, val physics: Physics) : CanDraw {
  */
 data class SpaceShip(val physics: Physics) : CanDraw {
 
-    var direction = 0f
+    var angle = 0f
 
     override fun draw(renderer: ShapeRenderer) {
         renderer.use(ShapeRenderer.ShapeType.Point) {
@@ -217,9 +217,9 @@ data class SpaceShip(val physics: Physics) : CanDraw {
         val two = Point(physics.location.x, physics.location.y + 15)
         val three = Point(physics.location.x + 10, physics.location.y - 15)
 
-        val oneMark = one.rotate(rotateAround, direction)
-        val twoMark = two.rotate(rotateAround, direction)
-        val threeMark = three.rotate(rotateAround, direction)
+        val oneMark = one.rotate(rotateAround, angle)
+        val twoMark = two.rotate(rotateAround, angle)
+        val threeMark = three.rotate(rotateAround, angle)
 
         return floatArrayOf(
                 oneMark.x, oneMark.y,
@@ -234,18 +234,18 @@ data class SpaceShip(val physics: Physics) : CanDraw {
     }
 
     fun turnRight() {
-        direction += 1
-        if (direction > 360) direction = 0f
+        angle += 1
+        if (angle > 360) angle = 0f
     }
 
     fun turnLeft() {
-        direction -= 1
-        if (direction < 0) direction = 360f
+        angle -= 1
+        if (angle < 0) angle = 360f
     }
 
     fun speedUp() {
-        physics.speed.dx += sin(direction)
-        physics.speed.dy += sin(direction)
+        physics.speed.dx += sin(angle)
+        physics.speed.dy += sin(angle)
     }
 
     fun shoot(): Bullet =
