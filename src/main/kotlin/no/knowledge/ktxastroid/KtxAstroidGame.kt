@@ -32,6 +32,9 @@ class KtxAstroidGame : KtxApplicationAdapter {
     private val astroids = mutableListOf<Astroid>()
     private val bullets = mutableListOf<Bullet>()
 
+    // will be moved into a Level object later
+    private var levelSpeedRange = (-5..5)
+
     override fun create() {
         renderer = ShapeRenderer()
         (1..5).forEach {
@@ -40,8 +43,8 @@ class KtxAstroidGame : KtxApplicationAdapter {
                             (50..1200).random().toFloat(),
                             (0..700).random().toFloat(),
                             Speed(
-                                    (-6..6).random().toFloat(),
-                                    (-6..6).random().toFloat()
+                                levelSpeedRange.random().toFloat(),
+                                levelSpeedRange.random().toFloat()
                             )
                     ))
             )
@@ -79,7 +82,7 @@ class KtxAstroidGame : KtxApplicationAdapter {
     }
 
     private fun printDebug() {
-        println("spaceship: ${spaceShip.direction} ${spaceShip.physics}")
+        println("spaceship: direction=${spaceShip.direction} ${spaceShip.physics}")
     }
 
     private fun logic() {
@@ -128,16 +131,20 @@ class KtxAstroidGame : KtxApplicationAdapter {
 
         // update bullets and remove those
         // out of range
-        val toRemove = bullets.map {
+        val bulletsToRemove = bullets.map {
             it.logic()
             if (it.outOfRange()) {
                 it
             } else null
         }.filterNotNull()
 
-        bullets.removeAll(toRemove)
+        bullets.removeAll(bulletsToRemove)
 
         spaceShip.logic()
+
+        if(astroids.isEmpty()) {
+            println("New Level!")
+        }
 
     }
 
@@ -199,17 +206,26 @@ data class SpaceShip(val physics: Physics) : CanDraw {
     /**
      * pair of x and y's for the spaceship
      */
-    private fun vertices(): FloatArray =
-            floatArrayOf(
-                    physics.x - 10,
-                    physics.y - 15,
-                    physics.x,
-                    physics.y + 15,
-                    physics.x + 10,
-                    physics.y - 15,
-                    physics.x - 10,
-                    physics.y - 15
-            )
+    private fun vertices(): FloatArray {
+
+        // on our way to transform x and y to Point objects
+        // keep it for now, but will be rewritten
+        val rotateAround = Point(physics.x, physics.y)
+        val one = Point(physics.x - 10, physics.y - 15)
+        val two = Point(physics.x, physics.y + 15)
+        val three = Point(physics.x + 10, physics.y - 15)
+
+        val oneMark = one.rotate(rotateAround, direction)
+        val twoMark = two.rotate(rotateAround, direction)
+        val threeMark = three.rotate(rotateAround, direction)
+
+        return floatArrayOf(
+                oneMark.x, oneMark.y,
+                twoMark.x, twoMark.y,
+                threeMark.x, threeMark.y,
+                oneMark.x, oneMark.y
+        )
+    }
 
     fun logic() {
         physics.moveWithSpeed()
@@ -226,8 +242,8 @@ data class SpaceShip(val physics: Physics) : CanDraw {
     }
 
     fun speedUp() {
-        physics.speed.x += sin(direction)
-        physics.speed.y += sin(direction)
+        physics.speed.dx += sin(direction)
+        physics.speed.dy += sin(direction)
     }
 
     fun shoot(): Bullet =
