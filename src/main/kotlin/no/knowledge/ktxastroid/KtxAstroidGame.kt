@@ -12,13 +12,25 @@ import ktx.graphics.use
 import kotlin.math.cos
 
 /**
+ * Setting window size x
+ */
+fun windowWidth() = 1280f
+
+
+/**
+ * Setting window size y
+ */
+fun windowHeight() = 960f
+
+
+/**
  * Main function. Start the game
  */
 fun main() {
     LwjglApplication(KtxAstroidGame(),
             LwjglApplicationConfiguration().apply {
-                width = 1280
-                height = 720
+                width = windowWidth().toInt()
+                height = windowHeight().toInt()
             })
 }
 
@@ -28,7 +40,7 @@ fun main() {
 class KtxAstroidGame : KtxApplicationAdapter {
 
     private lateinit var renderer: ShapeRenderer
-    private var spaceShip = SpaceShip(Physics(Point(640f, 350f)))
+    private var spaceShip = SpaceShip(Physics(Point(windowWidth()/2, windowHeight() / 2)))
     private val astroids = mutableListOf<Astroid>()
     private val bullets = mutableListOf<Bullet>()
 
@@ -41,8 +53,8 @@ class KtxAstroidGame : KtxApplicationAdapter {
             astroids.add(
                     Astroid(40f, Physics(
                             Point(
-                                    (50..1200).random().toFloat(),
-                                    (0..700).random().toFloat()
+                                    (50..windowWidth().toInt()).random().toFloat(),
+                                    (0..windowHeight().toInt()).random().toFloat()
                             ),
                             Speed(
                                     levelSpeedRange.random().toFloat(),
@@ -273,7 +285,7 @@ data class SpaceShip(val physics: Physics) : CanDraw {
                 pointOfShip,
                 Speed((physics.location.x - pointOfShip.x) * -1,
                         (physics.location.y - pointOfShip.y) * -1)
-            )
+        )
         )
 
     }

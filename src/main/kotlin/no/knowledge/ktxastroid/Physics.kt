@@ -13,8 +13,8 @@ data class Physics(
 
     fun moveWithSpeed() {
         location = Point(
-                swapIfOutside(location.x + speed.dx, 1200f),
-                swapIfOutside(location.y + speed.dy, 720f)
+                swapIfOutside(location.x + speed.dx, windowWidth()),
+                swapIfOutside(location.y + speed.dy, windowHeight())
         )
     }
 
@@ -24,7 +24,6 @@ data class Physics(
             } else if (value < 0) {
                 max
             } else value
-
 }
 
 /**
