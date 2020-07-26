@@ -9,7 +9,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import ktx.app.KtxApplicationAdapter
 import ktx.app.clearScreen
 import ktx.graphics.use
-import kotlin.math.sin
+import kotlin.math.cos
 
 /**
  * Main function. Start the game
@@ -60,15 +60,15 @@ class KtxAstroidGame : KtxApplicationAdapter {
     }
 
     private fun handleInput() {
-        if (Gdx.input.isKeyJustPressed(Input.Keys.RIGHT)) {
+        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
             spaceShip.turnRight()
         }
 
-        if (Gdx.input.isKeyJustPressed(Input.Keys.LEFT)) {
+        if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
             spaceShip.turnLeft()
         }
 
-        if (Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
+        if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
             spaceShip.speedUp()
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.D)) {
@@ -84,7 +84,7 @@ class KtxAstroidGame : KtxApplicationAdapter {
     }
 
     private fun printDebug() {
-        println("spaceship: direction=${spaceShip.angle} ${spaceShip.physics}")
+        println("spaceship: angle=${spaceShip.angle} ${spaceShip.physics}")
     }
 
     private fun logic() {
@@ -110,7 +110,7 @@ class KtxAstroidGame : KtxApplicationAdapter {
             if (astroid.size > 10) {
                 // spawn two smaller astroids
                 astroids.add(Astroid(astroid.size / 2, Physics(
-                       astroid.physics.location,
+                        astroid.physics.location,
                         Speed(
                                 (-6..6).random().toFloat(),
                                 (-6..6).random().toFloat()
@@ -234,18 +234,18 @@ data class SpaceShip(val physics: Physics) : CanDraw {
     }
 
     fun turnRight() {
-        angle += 1
+        angle -= 0.1f
         if (angle > 360) angle = 0f
     }
 
     fun turnLeft() {
-        angle -= 1
-        if (angle < 0) angle = 360f
+        angle += 0.1f
+        if (angle < 0) angle = 359f
     }
 
     fun speedUp() {
-        physics.speed.dx += sin(angle)
-        physics.speed.dy += sin(angle)
+        physics.speed.dx += (cos(angle) / 10f)
+        physics.speed.dy += (cos(angle) / 10f)  
     }
 
     fun shoot(): Bullet =
