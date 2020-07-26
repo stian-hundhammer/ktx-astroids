@@ -32,7 +32,7 @@ data class Physics(
 data class Speed(var dx: Float = 0f, var dy: Float = 0f)
 
 /**
- * Hold a point x, y
+ * Hold a point x, y and operations on it
  */
 data class Point(val x: Float, val y: Float) {
     fun rotate(rotateAround: Point, degree: Float): Point {

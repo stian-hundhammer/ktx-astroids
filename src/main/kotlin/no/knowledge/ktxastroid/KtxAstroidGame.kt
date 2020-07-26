@@ -260,12 +260,12 @@ data class SpaceShip(val physics: Physics) : CanDraw {
 
     fun turnRight() {
         angle -= 0.1f
-        if (angle > 360) angle = 0f
+        if (angle < 0) angle = 359.9f
     }
 
     fun turnLeft() {
         angle += 0.1f
-        if (angle < 0) angle = 359f
+        if (angle > 359.9) angle = 0f
     }
 
     fun speedUp() {
