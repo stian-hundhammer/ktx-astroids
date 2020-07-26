@@ -81,10 +81,15 @@ class KtxAstroidGame : KtxApplicationAdapter {
             }
         }
 
+        if (Gdx.input.isKeyJustPressed(Input.Keys.Q)) {
+            System.exit(0)
+        }
+
     }
 
     private fun printDebug() {
         println("spaceship: angle=${spaceShip.angle} ${spaceShip.physics}")
+        println("bullets: $bullets")
     }
 
     private fun logic() {
@@ -203,6 +208,14 @@ data class SpaceShip(val physics: Physics) : CanDraw {
             renderer.color = Color.WHITE
             renderer.polyline(vertices())
         }
+
+        // draw circle at point of ship during development
+        /*
+        val pointOfShip = Point(physics.location.x, physics.location.y + 15).rotate(physics.location, angle)
+        renderer.use(ShapeRenderer.ShapeType.Line) {
+            renderer.circle(pointOfShip.x, pointOfShip.y, 5f)
+        }
+         */
     }
 
     /**
@@ -245,14 +258,25 @@ data class SpaceShip(val physics: Physics) : CanDraw {
 
     fun speedUp() {
         physics.speed.dx += (cos(angle) / 10f)
-        physics.speed.dy += (cos(angle) / 10f)  
+        physics.speed.dy += (cos(angle) / 10f)
     }
 
-    fun shoot(): Bullet =
-            Bullet(Physics(
-                    physics.location,
-                    Speed(5f, 5f)))
+    fun shoot(): Bullet {
 
+        // doing the same thing here as rotating, and finding
+        // the diff between the rotated point of the space ship
+        // and the center
+
+        val pointOfShip = Point(physics.location.x, physics.location.y + 15).rotate(physics.location, angle)
+
+        return Bullet(Physics(
+                pointOfShip,
+                Speed((physics.location.x - pointOfShip.x) * -1,
+                        (physics.location.y - pointOfShip.y) * -1)
+            )
+        )
+
+    }
 }
 
 data class Bullet(val physics: Physics) : CanDraw {
@@ -260,7 +284,7 @@ data class Bullet(val physics: Physics) : CanDraw {
     private var ticksSinceFired: Int = 0
 
     override fun draw(renderer: ShapeRenderer) {
-        renderer.use(ShapeRenderer.ShapeType.Line) {
+        renderer.use(ShapeRenderer.ShapeType.Filled) {
             renderer.color = Color.WHITE
             renderer.circle(physics.location.x, physics.location.y, 2f)
         }
@@ -271,5 +295,5 @@ data class Bullet(val physics: Physics) : CanDraw {
         physics.moveWithSpeed()
     }
 
-    fun outOfRange(): Boolean = ticksSinceFired > 60
+    fun outOfRange(): Boolean = ticksSinceFired > 35
 }
