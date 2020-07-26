@@ -10,6 +10,7 @@ import ktx.app.KtxApplicationAdapter
 import ktx.app.clearScreen
 import ktx.graphics.use
 import kotlin.math.cos
+import kotlin.math.sin
 
 /**
  * Setting window size x
@@ -265,12 +266,15 @@ data class SpaceShip(val physics: Physics) : CanDraw {
 
     fun turnLeft() {
         angle += 0.1f
-        if (angle > 359.9) angle = 0f
+        if (angle > 359.9f) angle = 0f
     }
 
     fun speedUp() {
-        physics.speed.dx += (cos(angle) / 10f)
-        physics.speed.dy += (cos(angle) / 10f)
+
+        val pointOfShip = Point(physics.location.x, physics.location.y + 15).rotate(physics.location, angle)
+
+        physics.speed.dx += (physics.location.x - pointOfShip.x) / 200f * -1f
+        physics.speed.dy += (physics.location.y - pointOfShip.y) / 200f * - 1f
     }
 
     fun shoot(): Bullet {
