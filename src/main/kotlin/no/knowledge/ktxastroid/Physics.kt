@@ -7,14 +7,14 @@ import kotlin.math.sin
  * Position and speed
  */
 data class Physics(
-    var location: Point = Point(0f, 0f),
-    val speed: Speed = Speed()
+    var location: Point,
+    val speed: Speed
 ) {
 
     fun moveWithSpeed() {
         location = Point(
-            swapIfOutside(location.x + speed.dx, windowWidth()),
-            swapIfOutside(location.y + speed.dy, windowHeight())
+            swapIfOutside(location.x + speed.dx, windowWidth),
+            swapIfOutside(location.y + speed.dy, windowHeight)
         )
     }
 
@@ -29,7 +29,11 @@ data class Physics(
 /**
  * Holding speed in each direction
  */
-data class Speed(var dx: Float = 0f, var dy: Float = 0f)
+data class Speed(var dx: Float = 0f, var dy: Float = 0f) {
+    companion object {
+        val STILL = Speed(0f, 0f)
+    }
+}
 
 /**
  * Hold a point x, y and operations on it

@@ -13,12 +13,12 @@ import ktx.graphics.use
 /**
  * Setting window size x
  */
-fun windowWidth() = 1280f
+const val windowWidth = 1280f
 
 /**
  * Setting window size y
  */
-fun windowHeight() = 960f
+const val windowHeight = 960f
 
 /**
  * Main function. Start the game
@@ -27,8 +27,8 @@ fun main() {
     LwjglApplication(
         KtxAstroidGame(),
         LwjglApplicationConfiguration().apply {
-            width = windowWidth().toInt()
-            height = windowHeight().toInt()
+            width = windowWidth.toInt()
+            height = windowHeight.toInt()
         }
     )
 }
@@ -39,7 +39,7 @@ fun main() {
 class KtxAstroidGame : KtxApplicationAdapter {
 
     private lateinit var renderer: ShapeRenderer
-    private var spaceShip = SpaceShip(Physics(Point(windowWidth() / 2, windowHeight() / 2)))
+    private var spaceShip = SpaceShip(Physics(Point(windowWidth / 2, windowHeight / 2), Speed.STILL))
     private val astroids = mutableListOf<Astroid>()
     private val bullets = mutableListOf<Bullet>()
 
@@ -54,8 +54,8 @@ class KtxAstroidGame : KtxApplicationAdapter {
                     40f,
                     Physics(
                         Point(
-                            (50..windowWidth().toInt()).random().toFloat(),
-                            (0..windowHeight().toInt()).random().toFloat()
+                            (50..windowWidth.toInt()).random().toFloat(),
+                            (0..windowHeight.toInt()).random().toFloat()
                         ),
                         Speed(
                             levelSpeedRange.random().toFloat(),
@@ -126,31 +126,8 @@ class KtxAstroidGame : KtxApplicationAdapter {
             // explode!!!
             if (astroid.size > 10) {
                 // spawn two smaller astroids
-                astroids.add(
-                    Astroid(
-                        astroid.size / 2,
-                        Physics(
-                            astroid.physics.location,
-                            Speed(
-                                (-6..6).random().toFloat(),
-                                (-6..6).random().toFloat()
-                            )
-                        )
-                    )
-                )
-
-                astroids.add(
-                    Astroid(
-                        astroid.size / 2,
-                        Physics(
-                            astroid.physics.location,
-                            Speed(
-                                (-6..6).random().toFloat(),
-                                (-6..6).random().toFloat()
-                            )
-                        )
-                    )
-                )
+                astroids.add(createSmallerAstroid(astroid))
+                astroids.add(createSmallerAstroid(astroid))
             }
         }
 
@@ -174,6 +151,25 @@ class KtxAstroidGame : KtxApplicationAdapter {
         if (astroids.isEmpty()) {
             println("New Level!")
         }
+    }
+
+    /**
+     * Just create a smaller astroid based on the one
+     * given. The size of the new one is half the one given.
+     *
+     * @return new and smaller astroid
+     */
+    private fun createSmallerAstroid(astroid: Astroid): Astroid {
+        return Astroid(
+            astroid.size / 2,
+            Physics(
+                astroid.physics.location,
+                Speed(
+                    (-6..6).random().toFloat(),
+                    (-6..6).random().toFloat()
+                )
+            )
+        )
     }
 
     private fun draw() {
@@ -283,7 +279,7 @@ data class SpaceShip(val physics: Physics) : CanDraw {
         val pointOfShip = Point(physics.location.x, physics.location.y + 15).rotate(physics.location, angle)
 
         physics.speed.dx += (physics.location.x - pointOfShip.x) / 200f * -1f
-        physics.speed.dy += (physics.location.y - pointOfShip.y) / 200f * - 1f
+        physics.speed.dy += (physics.location.y - pointOfShip.y) / 200f * -1f
     }
 
     fun shoot(): Bullet {
