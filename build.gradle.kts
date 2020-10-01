@@ -1,5 +1,6 @@
 plugins {
     id("org.jetbrains.kotlin.jvm") version "1.3.72"
+    id("org.jlleitschuh.gradle.ktlint") version "9.4.0"
 }
 
 group = "no.knowledge"
@@ -12,6 +13,7 @@ repositories {
 }
 
 dependencies {
+
     // check newer versions..
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion")
     implementation(platform("org.jetbrains.kotlin:kotlin-bom"))

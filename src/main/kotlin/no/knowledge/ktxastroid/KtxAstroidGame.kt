@@ -9,30 +9,28 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import ktx.app.KtxApplicationAdapter
 import ktx.app.clearScreen
 import ktx.graphics.use
-import kotlin.math.cos
-import kotlin.math.sin
 
 /**
  * Setting window size x
  */
 fun windowWidth() = 1280f
 
-
 /**
  * Setting window size y
  */
 fun windowHeight() = 960f
 
-
 /**
  * Main function. Start the game
  */
 fun main() {
-    LwjglApplication(KtxAstroidGame(),
-            LwjglApplicationConfiguration().apply {
-                width = windowWidth().toInt()
-                height = windowHeight().toInt()
-            })
+    LwjglApplication(
+        KtxAstroidGame(),
+        LwjglApplicationConfiguration().apply {
+            width = windowWidth().toInt()
+            height = windowHeight().toInt()
+        }
+    )
 }
 
 /**
@@ -41,7 +39,7 @@ fun main() {
 class KtxAstroidGame : KtxApplicationAdapter {
 
     private lateinit var renderer: ShapeRenderer
-    private var spaceShip = SpaceShip(Physics(Point(windowWidth()/2, windowHeight() / 2)))
+    private var spaceShip = SpaceShip(Physics(Point(windowWidth() / 2, windowHeight() / 2)))
     private val astroids = mutableListOf<Astroid>()
     private val bullets = mutableListOf<Bullet>()
 
@@ -52,16 +50,19 @@ class KtxAstroidGame : KtxApplicationAdapter {
         renderer = ShapeRenderer()
         (1..5).forEach {
             astroids.add(
-                    Astroid(40f, Physics(
-                            Point(
-                                    (50..windowWidth().toInt()).random().toFloat(),
-                                    (0..windowHeight().toInt()).random().toFloat()
-                            ),
-                            Speed(
-                                    levelSpeedRange.random().toFloat(),
-                                    levelSpeedRange.random().toFloat()
-                            )
-                    ))
+                Astroid(
+                    40f,
+                    Physics(
+                        Point(
+                            (50..windowWidth().toInt()).random().toFloat(),
+                            (0..windowHeight().toInt()).random().toFloat()
+                        ),
+                        Speed(
+                            levelSpeedRange.random().toFloat(),
+                            levelSpeedRange.random().toFloat()
+                        )
+                    )
+                )
             )
         }
     }
@@ -97,7 +98,6 @@ class KtxAstroidGame : KtxApplicationAdapter {
         if (Gdx.input.isKeyJustPressed(Input.Keys.Q)) {
             System.exit(0)
         }
-
     }
 
     private fun printDebug() {
@@ -106,7 +106,6 @@ class KtxAstroidGame : KtxApplicationAdapter {
     }
 
     private fun logic() {
-
 
         // rewrite - not very functional..
         var hits = mutableListOf<Pair<Astroid, Bullet>>()
@@ -127,21 +126,31 @@ class KtxAstroidGame : KtxApplicationAdapter {
             // explode!!!
             if (astroid.size > 10) {
                 // spawn two smaller astroids
-                astroids.add(Astroid(astroid.size / 2, Physics(
-                        astroid.physics.location,
-                        Speed(
+                astroids.add(
+                    Astroid(
+                        astroid.size / 2,
+                        Physics(
+                            astroid.physics.location,
+                            Speed(
                                 (-6..6).random().toFloat(),
                                 (-6..6).random().toFloat()
-                        ))
-                ))
+                            )
+                        )
+                    )
+                )
 
-                astroids.add(Astroid(astroid.size / 2, Physics(
-                        astroid.physics.location,
-                        Speed(
+                astroids.add(
+                    Astroid(
+                        astroid.size / 2,
+                        Physics(
+                            astroid.physics.location,
+                            Speed(
                                 (-6..6).random().toFloat(),
                                 (-6..6).random().toFloat()
-                        ))
-                ))
+                            )
+                        )
+                    )
+                )
             }
         }
 
@@ -165,7 +174,6 @@ class KtxAstroidGame : KtxApplicationAdapter {
         if (astroids.isEmpty()) {
             println("New Level!")
         }
-
     }
 
     private fun draw() {
@@ -174,7 +182,6 @@ class KtxAstroidGame : KtxApplicationAdapter {
         bullets.forEach { it.draw(renderer) }
         astroids.forEach { it.draw(renderer) }
     }
-
 }
 
 interface CanDraw {
@@ -186,23 +193,21 @@ interface CanDraw {
  */
 class Astroid(val size: Float, val physics: Physics) : CanDraw {
     override fun draw(renderer: ShapeRenderer) =
-            renderer.use(ShapeRenderer.ShapeType.Line) {
-                renderer.color = Color.WHITE
-                renderer.circle(physics.location.x, physics.location.y, size)
-            }
+        renderer.use(ShapeRenderer.ShapeType.Line) {
+            renderer.color = Color.WHITE
+            renderer.circle(physics.location.x, physics.location.y, size)
+        }
 
     fun logic() {
         physics.moveWithSpeed()
     }
 
     fun isHitByBullet(bullet: Bullet): Boolean =
-            bullet.physics.location.x > physics.location.x - size &&
-                    bullet.physics.location.x < physics.location.x + size &&
-                    bullet.physics.location.y > physics.location.y - size &&
-                    bullet.physics.location.y < physics.location.y + size
-
+        bullet.physics.location.x > physics.location.x - size &&
+            bullet.physics.location.x < physics.location.x + size &&
+            bullet.physics.location.y > physics.location.y - size &&
+            bullet.physics.location.y < physics.location.y + size
 }
-
 
 /**
  * The space ship
@@ -248,10 +253,14 @@ data class SpaceShip(val physics: Physics) : CanDraw {
         val threeMark = three.rotate(rotateAround, angle)
 
         return floatArrayOf(
-                oneMark.x, oneMark.y,
-                twoMark.x, twoMark.y,
-                threeMark.x, threeMark.y,
-                oneMark.x, oneMark.y
+            oneMark.x,
+            oneMark.y,
+            twoMark.x,
+            twoMark.y,
+            threeMark.x,
+            threeMark.y,
+            oneMark.x,
+            oneMark.y
         )
     }
 
@@ -285,13 +294,15 @@ data class SpaceShip(val physics: Physics) : CanDraw {
 
         val pointOfShip = Point(physics.location.x, physics.location.y + 15).rotate(physics.location, angle)
 
-        return Bullet(Physics(
+        return Bullet(
+            Physics(
                 pointOfShip,
-                Speed((physics.location.x - pointOfShip.x) * -1,
-                        (physics.location.y - pointOfShip.y) * -1)
+                Speed(
+                    (physics.location.x - pointOfShip.x) * -1,
+                    (physics.location.y - pointOfShip.y) * -1
+                )
+            )
         )
-        )
-
     }
 }
 

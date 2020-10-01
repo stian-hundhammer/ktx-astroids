@@ -3,27 +3,27 @@ package no.knowledge.ktxastroid
 import kotlin.math.cos
 import kotlin.math.sin
 
-
 /**
  * Position and speed
  */
 data class Physics(
-        var location: Point = Point(0f, 0f),
-        val speed: Speed = Speed()) {
+    var location: Point = Point(0f, 0f),
+    val speed: Speed = Speed()
+) {
 
     fun moveWithSpeed() {
         location = Point(
-                swapIfOutside(location.x + speed.dx, windowWidth()),
-                swapIfOutside(location.y + speed.dy, windowHeight())
+            swapIfOutside(location.x + speed.dx, windowWidth()),
+            swapIfOutside(location.y + speed.dy, windowHeight())
         )
     }
 
     private fun swapIfOutside(value: Float, max: Float): Float =
-            if (value > max) {
-                0f
-            } else if (value < 0) {
-                max
-            } else value
+        if (value > max) {
+            0f
+        } else if (value < 0) {
+            max
+        } else value
 }
 
 /**
@@ -40,8 +40,8 @@ data class Point(val x: Float, val y: Float) {
         val myY = y - rotateAround.y
 
         return Point(
-                (myX * cos(degree)) - (myY * sin(degree)) + rotateAround.x,
-                (myX * sin(degree)) + (myY * cos(degree)) + rotateAround.y
+            (myX * cos(degree)) - (myY * sin(degree)) + rotateAround.x,
+            (myX * sin(degree)) + (myY * cos(degree)) + rotateAround.y
         )
     }
 }
